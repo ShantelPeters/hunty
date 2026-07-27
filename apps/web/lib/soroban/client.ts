@@ -1,7 +1,6 @@
-import * as Sentry from "@sentry/nextjs"
-import Server from "@stellar/stellar-sdk"
-
-import { createSorobanRpcOptimizer } from "./rpcOptimization"
+import * as Sentry from "@sentry/nextjs";
+import Server from "@stellar/stellar-sdk";
+import { createSorobanRpcOptimizer } from "./rpcOptimization";
 
 /**
  * Testnet network configuration

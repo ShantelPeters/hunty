@@ -29,14 +29,14 @@ import { useIsFeatureEnabled } from "@/hooks/useFeatureFlag";
 import { attachMediaTypeToCid } from "@/lib/clueMedia";
 
 interface HuntFormProps {
-  hunt: HuntDraft
-  onUpdate: (field: string, value: string | number | undefined) => void
-  onRemove: () => void
-  huntId?: number
-  onCluesSaved?: (count: number) => void
-  onImageUploadStateChange?: (state: CoverImageUploadState) => void
+  hunt: HuntDraft;
+  onUpdate: (field: string, value: string | number | undefined) => void;
+  onRemove: () => void;
+  huntId?: number;
+  onCluesSaved?: (count: number) => void;
+  onImageUploadStateChange?: (state: CoverImageUploadState) => void;
   /** Called after a clue reorder so the parent can trigger draft auto-save. */
-  onClueReorder?: () => void
+  onClueReorder?: () => void;
 }
 
 const clueSchema = z.object({
@@ -353,8 +353,8 @@ export function HuntForm({
             aria-label="Participant cap"
             value={hunt.maxParticipants ?? ""}
             onChange={(e: ChangeEvent<HTMLInputElement>) => {
-              const raw = e.target.value.trim()
-              onUpdate("maxParticipants", raw === "" ? undefined : Number(raw))
+              const raw = e.target.value.trim();
+              onUpdate("maxParticipants", raw === "" ? undefined : Number(raw));
             }}
             className="w-full pl-6 py-3"
           />
@@ -472,6 +472,7 @@ export function HuntForm({
                       name={`clues.${index}.question`}
                       render={({ field: f }) => (
                         <Input
+                          id={`clue-${index}-question`}
                           placeholder="Riddle / Question"
                           aria-label={`Clue ${index + 1} Question`}
                           aria-describedby={
@@ -501,6 +502,7 @@ export function HuntForm({
                       name={`clues.${index}.answer`}
                       render={({ field: f }) => (
                         <Input
+                          id={`clue-${index}-answer`}
                           placeholder="Answer (use | for multiple)"
                           aria-label={`Clue ${index + 1} Answer`}
                           aria-describedby={
@@ -541,6 +543,16 @@ export function HuntForm({
                         />
                       )}
                     />
+                    {errors.clues?.[index]?.points && (
+                      <span
+                        role="alert"
+                        aria-live="assertive"
+                        id={`clue-${index}-points-error`}
+                        className="text-red-500 text-xs mt-0.5"
+                      >
+                        {errors.clues[index].points.message}
+                      </span>
+                    )}
                   </div>
                   <Button
                     type="button"

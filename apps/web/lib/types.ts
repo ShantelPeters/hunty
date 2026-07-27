@@ -509,6 +509,12 @@ export interface PlayerStats {
   lastUpdated: number;
 }
 
+export interface PlayerProfile {
+  address: string;
+  displayName?: string;
+  avatarUrl?: string;
+}
+
 export type CoverImageUploadState =
   | "idle"
   | "uploading"
@@ -637,6 +643,8 @@ export interface ArchivedSeason {
 export interface SeasonBadge {
   seasonId: number;
   seasonName: string;
+  address?: string;
+  name?: string;
   /** Final rank the player achieved, if the season has ended. */
   rank?: number;
   earnedAt: number;

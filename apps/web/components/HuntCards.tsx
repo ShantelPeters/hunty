@@ -15,6 +15,7 @@ import { calculateCluePoints, DEFAULT_SCORING_WEIGHTS } from "@/lib/scoring";
 import { resolveImageSrc, GATEWAY_COUNT } from "@/lib/ipfs";
 import type { ClueHint, HuntCard as Hunt } from "@/lib/types";
 import { usePlayerCount } from "@/hooks/usePlayerCount";
+import { getClueMediaKind, getClueMediaSource } from "@/lib/clueMedia";
 
 export type { Hunt };
 
@@ -184,7 +185,7 @@ export const HuntCards: React.FC<HuntCardsProps> = ({
   const handleInputFocus = () => {
     if (typeof window === "undefined") return;
     window.setTimeout(() => {
-      document.activeElement?.scrollIntoView({ block: "center", inline: "nearest", behavior: "smooth" });
+      document.activeElement?.scrollIntoView?.({ block: "center", inline: "nearest", behavior: "smooth" });
     }, 120);
   };
 
@@ -412,6 +413,38 @@ export const HuntCards: React.FC<HuntCardsProps> = ({
           )}
         </div>
       </div>
+
+      {/* ── Clue media (audio / video) ───────────────────────────────── */}
+      {hunt.mediaCid && (() => {
+        const kind = getClueMediaKind(hunt.mediaCid);
+        const src = getClueMediaSource(hunt.mediaCid, imgGatewayIdx);
+        if (!src) return null;
+        if (kind === "audio") {
+          return (
+            <div className="bg-white dark:bg-slate-900 px-4 sm:px-6 pt-3 print:hidden">
+              <audio
+                controls
+                src={src}
+                className="w-full"
+                aria-label="Clue audio"
+              />
+            </div>
+          );
+        }
+        if (kind === "video") {
+          return (
+            <div className="bg-white dark:bg-slate-900 px-4 sm:px-6 pt-3 print:hidden">
+              <video
+                controls
+                src={src}
+                className="w-full rounded-lg"
+                aria-label="Clue video"
+              />
+            </div>
+          );
+        }
+        return null;
+      })()}
 
       {/* ── Progressive hints panel ─────────────────────────────────── */}
       {hasHints && !solved && (

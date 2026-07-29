@@ -14,6 +14,22 @@ vi.mock("@/lib/context/WalletContext", () => ({
 
 import { useWallet } from "@/lib/context/WalletContext";
 
+const translations: Record<string, string> = {
+  connectWallet: "Connect Wallet",
+  connectedWallet: "Connected Wallet",
+  copyAddress: "Copy Address",
+  copied: "Copied!",
+  disconnectWallet: "Disconnect Wallet",
+};
+
+vi.mock("next-intl", () => ({
+  useTranslations: () => (key: string) => translations[key] ?? key,
+}));
+
+vi.mock("@/hooks/useIsMounted", () => ({
+  useIsMounted: () => true,
+}));
+
 vi.mock("@/components/ThemeToggle", () => ({
   ThemeToggle: () => <div data-testid="theme-toggle" />,
 }));

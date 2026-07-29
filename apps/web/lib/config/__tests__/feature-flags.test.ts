@@ -1,6 +1,6 @@
 import { describe, expect, it, vi, beforeEach } from "vitest"
 
-import { evaluateAllFlags, evaluateFlag } from "@/lib/config/feature-flags"
+import { evaluateAllFlags, evaluateFlag, setStoredOverride, clearStoredOverride } from "@/lib/config/feature-flags"
 import { FEATURE_FLAG_DEFINITIONS } from "@/lib/config/feature-flags/definitions"
 
 beforeEach(() => {
@@ -87,7 +87,6 @@ describe("Environment-based overrides", () => {
 
 describe("localStorage overrides", () => {
   it("persists and reads overrides from localStorage", () => {
-    const { setStoredOverride, clearStoredOverride } = require("@/lib/config/feature-flags")
     setStoredOverride("nftMarketplace", { value: true, source: "localStorage" })
     expect(evaluateFlag("nftMarketplace")).toBe(true)
     clearStoredOverride("nftMarketplace")
@@ -95,7 +94,6 @@ describe("localStorage overrides", () => {
   })
 
   it("expired overrides are ignored", () => {
-    const { setStoredOverride } = require("@/lib/config/feature-flags")
     setStoredOverride("huntChat", { value: true, source: "localStorage", expiresAt: Date.now() - 1000 })
     expect(evaluateFlag("huntChat")).toBe(false)
   })

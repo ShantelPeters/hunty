@@ -187,6 +187,11 @@ const ROUTE_MANIFEST: RouteEntry[] = [
   { file: "og/hunt/[id]/route.ts",                  path: "/api/og/hunt/[id]",                  methods: ["GET"],           auth: "public" },
   { file: "og/leaderboard/route.ts",                path: "/api/og/leaderboard",                methods: ["GET"],           auth: "public" },
 
+  // ── paymaster ────────────────────────────────────────────────────────
+  { file: "paymaster/admin/config/route.ts",        path: "/api/paymaster/admin/config",        methods: ["GET", "POST"],   auth: "admin" },
+  { file: "paymaster/budget/[wallet]/route.ts",     path: "/api/paymaster/budget/[wallet]",     methods: ["GET"],           auth: "public" },
+  { file: "paymaster/sponsor/route.ts",             path: "/api/paymaster/sponsor",             methods: ["POST"],          auth: "public" },
+
   // ── push ─────────────────────────────────────────────────────────────
   { file: "push/send/route.ts",                     path: "/api/push/send",                     methods: ["POST"],          auth: "public" },
 

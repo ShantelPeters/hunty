@@ -15,6 +15,11 @@ vi.mock("@/lib/contracts/hunt", () => ({
   get_hunt_leaderboard: vi.fn().mockResolvedValue([]),
 }));
 
+vi.mock("@/lib/featuredHuntDb", () => ({
+  readFeaturedId: vi.fn().mockResolvedValue(1),
+  writeFeaturedId: vi.fn().mockResolvedValue(undefined),
+}));
+
 vi.mock("next/og", () => ({
   ImageResponse: class ImageResponse extends Response {
     constructor() {

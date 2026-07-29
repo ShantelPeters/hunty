@@ -241,6 +241,7 @@ export function ClueSortList({ items, onReorder, disabled = false, enableDrag = 
             key={item.id}
             ref={(el) => { itemRefs.current[index] = el }}
             role="listitem"
+            aria-grabbed={isDragged ? "true" : "false"}
             onPointerDown={(e) => handlePointerDown(e, index)}
             onPointerMove={handlePointerMove}
             onPointerUp={handlePointerUp}
@@ -285,13 +286,12 @@ export function ClueSortList({ items, onReorder, disabled = false, enableDrag = 
             </div>
 
             {/* Move buttons — always visible on touch, hover/focus on desktop */}
-            <div className="flex items-center gap-0.5 shrink-0" aria-hidden="true">
+            <div className="flex items-center gap-0.5 shrink-0">
               <button
                 type="button"
                 onClick={() => handleMoveUp(index)}
                 disabled={disabled || index === 0}
                 aria-label={`Move clue ${index + 1} up`}
-                aria-hidden="false"
                 tabIndex={-1}
                 className="p-1 rounded text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 disabled:opacity-20 disabled:cursor-not-allowed transition-colors"
               >
@@ -302,7 +302,6 @@ export function ClueSortList({ items, onReorder, disabled = false, enableDrag = 
                 onClick={() => handleMoveDown(index)}
                 disabled={disabled || index === items.length - 1}
                 aria-label={`Move clue ${index + 1} down`}
-                aria-hidden="false"
                 tabIndex={-1}
                 className="p-1 rounded text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 disabled:opacity-20 disabled:cursor-not-allowed transition-colors"
               >

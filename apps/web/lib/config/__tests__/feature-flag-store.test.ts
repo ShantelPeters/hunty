@@ -6,10 +6,7 @@ import { useFeatureFlagStore } from "@/lib/config/feature-flag-store"
 beforeEach(() => {
   vi.unstubAllEnvs()
   localStorage.clear()
-  const { result } = renderHook(() => useFeatureFlagStore())
-  act(() => {
-    result.current.clearAllOverrides()
-  })
+  useFeatureFlagStore.setState({ initialized: false, flags: {} as any, overrides: {} })
 })
 
 describe("useFeatureFlagStore", () => {

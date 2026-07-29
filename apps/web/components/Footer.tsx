@@ -11,9 +11,8 @@ import {
   Send,
   ShieldCheck,
   Sparkles,
-} from "lucide-react"
-import { useTranslations } from "next-intl"
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 const footerSections = [
   {
@@ -63,10 +62,8 @@ const socialLinks = [
 ];
 
 export function Footer() {
-  const t = useTranslations("footer")
-  const commonT = useTranslations("common")
-  const [email, setEmail] = useState("")
-  const [isSubscribed, setIsSubscribed] = useState(false)
+  const t = useTranslations("footer");
+  const commonT = useTranslations("common");
   const [email, setEmail] = useState("");
   const [isSubscribed, setIsSubscribed] = useState(false);
 
@@ -91,7 +88,6 @@ export function Footer() {
               Hunty
             </Link>
             <p className="max-w-sm text-sm leading-6 text-slate-600 dark:text-slate-400">
-              {t("description")}
               Create, discover, and complete Web3 scavenger hunts powered by Stellar rewards.
             </p>
             <Link
@@ -102,7 +98,7 @@ export function Footer() {
               aria-label="Built on Stellar"
             >
               <Sparkles className="h-3.5 w-3.5" />
-              {t("builtOnStellar")}
+              Built on Stellar
               <ArrowUpRight className="h-3.5 w-3.5" />
             </Link>
           </div>
@@ -131,12 +127,9 @@ export function Footer() {
 
           <div className="space-y-5">
             <div>
-              <h2 className="text-sm font-bold text-slate-900 dark:text-white">
-                {t("stayInHunt")}
-              </h2>
               <h2 className="text-sm font-bold text-slate-900 dark:text-white">Stay in the hunt</h2>
               <p className="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-400">
-                {t("getUpdates")}
+                Get updates on new hunts and platform releases.
               </p>
             </div>
             <form onSubmit={handleSubscribe} className="flex flex-col gap-3 sm:max-w-md">
@@ -165,13 +158,13 @@ export function Footer() {
                   aria-label="Subscribe to updates"
                   className="inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-[#0C0C4F] px-4 text-sm font-bold text-white transition hover:bg-[#3737A4] focus:outline-none focus:ring-2 focus:ring-[#3737A4]/40"
                 >
-                  {t("subscribe")}
+                  Subscribe
                 </button>
               </div>
               {isSubscribed && (
                 <p className="inline-flex items-center gap-1.5 text-sm font-medium text-emerald-600 dark:text-emerald-400">
                   <BadgeCheck className="h-4 w-4" />
-                  {t("thanksForSubscribing")}
+                  Thanks for subscribing!
                 </p>
               )}
             </form>
@@ -180,13 +173,13 @@ export function Footer() {
 
         <div className="mt-10 flex flex-col gap-5 border-t border-slate-200 pt-6 text-sm text-slate-500 dark:border-white/10 dark:text-slate-400 md:flex-row md:items-center md:justify-between">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-6">
-            <p>&copy; {new Date().getFullYear()} {commonT("appName")}. {t("rights")}</p>
+            <p>&copy; {new Date().getFullYear()} Hunty. All rights reserved.</p>
             <Link
               href="/help"
               className="inline-flex items-center gap-1.5 transition-colors hover:text-[#3737A4] dark:hover:text-blue-300"
             >
               <HelpCircle className="h-4 w-4" />
-              {t("helpAndTroubleshooting")}
+              Help &amp; Troubleshooting
             </Link>
           </div>
 
@@ -209,4 +202,3 @@ export function Footer() {
     </footer>
   );
 }
- 

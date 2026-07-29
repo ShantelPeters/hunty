@@ -45,6 +45,14 @@ export type WalletActions = {
   }) => void
   /** Override last-used provider (e.g., if session is restored externally) */
   setLastUsedProvider: (provider: WalletProvider) => void
+  /** Helper to mark wallet as connected */
+  setConnected: (publicKey: string, provider: WalletProvider) => void
+  /** Helper to clear connection state */
+  setDisconnected: () => void
+  /** Helper to set connecting state */
+  setConnecting: (connecting: boolean) => void
+  /** Helper to set connection error */
+  setError: (error: string | null) => void
 }
 
 export type WalletStore = WalletState & WalletActions
@@ -64,7 +72,7 @@ export const useWalletStore = create<WalletStore>()(
     (set) => ({
       ...initialState,
 
-          syncFromMachine: ({ status, publicKey, provider, error }) =>
+      syncFromMachine: ({ status, publicKey, provider, error }) =>
         set((prev) => ({
           status,
           connected: status === "connected",
@@ -78,6 +86,41 @@ export const useWalletStore = create<WalletStore>()(
         })),
 
       setLastUsedProvider: (provider) => set({ lastUsedProvider: provider }),
+
+      setConnected: (publicKey, provider) =>
+        set({
+          status: "connected",
+          connected: true,
+          publicKey,
+          provider,
+          lastUsedProvider: provider,
+          connecting: false,
+          error: null,
+        }),
+
+      setDisconnected: () =>
+        set({
+          status: "idle",
+          connected: false,
+          publicKey: "",
+          provider: null,
+          connecting: false,
+          error: null,
+        }),
+
+      setConnecting: (connecting) =>
+        set((prev) => ({
+          status: connecting ? "connecting" : prev.status === "connecting" ? "idle" : prev.status,
+          connecting,
+          error: connecting ? null : prev.error,
+        })),
+
+      setError: (error) =>
+        set((prev) => ({
+          status: error ? "error" : prev.status === "error" ? "idle" : prev.status,
+          error,
+          connecting: false,
+        })),
     }),
     {
       name: "hunty_wallet_store",

@@ -31,6 +31,23 @@ vi.mock("@/hooks/usePlayerCount", () => ({
   })),
 }))
 
+// Mock @/lib/ipfs so Image and resolveImageSrc work in jsdom
+vi.mock("@/lib/ipfs", () => ({
+  resolveImageSrc: (src: string) => src,
+  GATEWAY_COUNT: 1,
+}))
+
+// Mock @/lib/clueMedia so mediaCid is resolved without real IPFS
+vi.mock("@/lib/clueMedia", () => ({
+  getClueMediaKind: (cid: string) => {
+    if (cid?.includes("type=audio")) return "audio"
+    if (cid?.includes("type=video")) return "video"
+    if (cid?.includes("type=image")) return "image"
+    return null
+  },
+  getClueMediaSource: (cid: string) => cid?.split("?")[0] ?? null,
+}))
+
 const baseHunt: HuntCard = {
   id: 1,
   title: "Test Hunt",

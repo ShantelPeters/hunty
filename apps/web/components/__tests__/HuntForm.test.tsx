@@ -19,6 +19,19 @@ import { HuntForm } from "../HuntForm"
 // Shared mocks
 // ---------------------------------------------------------------------------
 
+vi.mock("next-intl", () => ({
+  useTranslations: () => (key: string) => key,
+}))
+
+vi.mock("@/components/FeatureFlagProvider", () => ({
+  useFeatureFlagContext: () => ({ isEnabled: () => false }),
+}))
+
+vi.mock("@/hooks/useFeatureFlag", () => ({
+  useIsFeatureEnabled: () => false,
+  useFeatureFlag: () => ({ enabled: false, loading: false }),
+}))
+
 vi.mock("sonner", () => ({
   toast: { error: vi.fn(), success: vi.fn() },
 }))

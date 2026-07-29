@@ -4,6 +4,7 @@
  * transaction simulation, typed returns, and retry logic
  */
 
+import Server from "@stellar/stellar-sdk"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
 import {
@@ -23,24 +24,22 @@ import {
 // MOCKS
 // ============================================================================
 
-vi.mock("@stellar/stellar-sdk", () => {
+const { mockServer, ServerMock, MockTransactionBuilder, mockAccount } = vi.hoisted(() => {
   const mockAccount = {
     id: "GTEST0000000000000000000000000000000000000000000000000000",
     sequence: "100",
     toXDR: vi.fn().mockReturnValue("mock-account-xdr"),
   }
 
-  const mockTransaction = {
-    toXDR: vi.fn().mockReturnValue("mock-xdr"),
-    operations: [],
-    fee: "100",
-    networkPassphrase: "Test SDF Network ; September 2015",
-  }
-
   const mockTransactionBuilder = {
     addOperation: vi.fn().mockReturnThis(),
     setTimeout: vi.fn().mockReturnThis(),
-    build: vi.fn().mockReturnValue(mockTransaction),
+    build: vi.fn().mockReturnValue({
+      toXDR: vi.fn().mockReturnValue("mock-xdr"),
+      operations: [],
+      fee: "100",
+      networkPassphrase: "Test SDF Network ; September 2015",
+    }),
   }
 
   const MockTransactionBuilder = vi.fn().mockImplementation(function MockTransactionBuilder() {
@@ -48,7 +47,7 @@ vi.mock("@stellar/stellar-sdk", () => {
   })
 
   const mockServer = {
-    getAccount: vi.fn().mockResolvedValue(mockAccount),
+    getAccount: vi.fn(),
     submitTransaction: vi.fn().mockResolvedValue({ hash: "mock-tx-hash-123" }),
     simulateTransaction: vi.fn().mockResolvedValue({
       status: "SUCCESS",
@@ -59,22 +58,25 @@ vi.mock("@stellar/stellar-sdk", () => {
     getTransaction: vi.fn().mockResolvedValue({ status: "SUCCESS" }),
   }
 
-  // The source calls `new Server(url)` (createServer) and
-  // `new TransactionBuilder(account, {...})` (buildTx). mockReturnValue is
-  // illegal with `new` so we use mockImplementation to make the mock act as
-  // a constructor that returns our preconfigured stub object.
-  const Server = vi.fn().mockImplementation(function Server() {
+  const ServerMock = vi.fn().mockImplementation(function Server() {
     return mockServer
   })
 
+  return { mockServer, ServerMock, MockTransactionBuilder, mockAccount }
+})
+
+vi.mock("@stellar/stellar-sdk", () => {
   return {
-    default: Server,
-    Server,
+    default: ServerMock,
+    Server: ServerMock,
+    rpc: { Server: ServerMock },
     TransactionBuilder: MockTransactionBuilder,
     Operation: {
       manageData: vi.fn().mockReturnValue({ type: "manageData" }),
     },
-    Account: vi.fn().mockImplementation(() => mockAccount),
+    Account: vi.fn().mockImplementation(function Account() {
+      return mockAccount
+    }),
   }
 })
 
@@ -104,6 +106,18 @@ vi.mock("../../stellarErrors", () => ({
 // HELPERS
 // ============================================================================
 
+beforeEach(() => {
+  mockServer.getAccount = vi.fn().mockResolvedValue(mockAccount)
+  mockServer.submitTransaction = vi.fn().mockResolvedValue({ hash: "mock-tx-hash-123" })
+  mockServer.simulateTransaction = vi.fn().mockResolvedValue({
+    status: "SUCCESS",
+    minResourceFee: "150000",
+    cost: { cpuInsns: "500000", memBytes: "4096" },
+    results: [],
+  })
+  mockServer.getTransaction = vi.fn().mockResolvedValue({ status: "SUCCESS" })
+})
+
 function createMockWallet(overrides?: {
   getPublicKey?: () => Promise<string>
   signTransaction?: (xdr: string) => Promise<string>
@@ -119,11 +133,7 @@ function createMockWallet(overrides?: {
 }
 
 function getMockServer() {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const { default: Server } = require("@stellar/stellar-sdk") as {
-    default: ReturnType<typeof vi.fn>
-  }
-  return Server()
+  return (Server as unknown as () => ReturnType<typeof vi.fn>)()
 }
 
 function createWriteConfig(overrides?: Partial<ContractWriteConfig>): ContractWriteConfig {
@@ -353,7 +363,7 @@ describe("writeContract", () => {
 
   it("throws when simulation fails", async () => {
     const server = getMockServer()
-    server.simulateTransaction.mockResolvedValueOnce({
+    server.simulateTransaction.mockResolvedValue({
       status: "FAILED",
       error: "Contract not found",
     })

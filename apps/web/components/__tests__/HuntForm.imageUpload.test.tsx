@@ -13,6 +13,19 @@ const { loggerError, toastError, uploadToIPFSMock } = vi.hoisted(() => ({
   uploadToIPFSMock: vi.fn(),
 }))
 
+vi.mock("next-intl", () => ({
+  useTranslations: () => (key: string) => key,
+}))
+
+vi.mock("@/components/FeatureFlagProvider", () => ({
+  useFeatureFlagContext: () => ({ isEnabled: () => false }),
+}))
+
+vi.mock("@/hooks/useFeatureFlag", () => ({
+  useIsFeatureEnabled: () => false,
+  useFeatureFlag: () => ({ enabled: false, loading: false }),
+}))
+
 vi.mock("sonner", () => ({
   toast: { error: toastError, success: vi.fn() },
 }))
@@ -27,12 +40,15 @@ vi.mock("@/lib/logger", () => ({
 }))
 
 vi.mock("@/lib/contracts/hunt", () => ({
-  addClue: vi.fn().mockResolvedValue({ success: true }),
+  addCluesBatch: vi.fn().mockResolvedValue({ success: true }),
 }))
 
 vi.mock("@/lib/huntStore", () => ({
   saveClueLocally: vi.fn().mockReturnValue(1),
+  saveCluesLocallyBatch: vi.fn().mockReturnValue([1]),
   updateClueAnswer: vi.fn(),
+  takeHuntStoreSnapshot: vi.fn().mockReturnValue({}),
+  restoreHuntStoreSnapshot: vi.fn(),
 }))
 
 vi.mock("@/lib/crypto", () => ({
